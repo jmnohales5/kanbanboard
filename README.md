@@ -1,3 +1,3 @@
 # Kanban Board
 
-Tablero Kanban en HTML/CSS/JS puro. Los datos se guardan en el navegador (localStorage).
+Three-phase Kanban board (To Do, In Progress, Done) in plain HTML/CSS/JS. Data is stored in the browser (localStorage).

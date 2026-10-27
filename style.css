@@ -87,7 +87,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-
 /* Board */
 .board {
   flex: 1; min-height: 0;
-  display: grid; grid-template-columns: repeat(4, minmax(260px, 1fr)); gap: 16px;
+  display: grid; grid-template-columns: repeat(3, minmax(280px, 1fr)); gap: 16px;
   padding: 0 28px 28px; overflow-x: auto;
 }
 .column {
@@ -158,7 +158,7 @@ form textarea { resize: vertical; }
 
 @media (max-width: 720px) {
   .topbar, .stats, .board { padding-left: 14px; padding-right: 14px; }
-  .board { grid-template-columns: repeat(4, 82vw); }
+  .board { grid-template-columns: repeat(3, 82vw); }
   .row { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

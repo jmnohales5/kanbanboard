@@ -1,12 +1,11 @@
 // Kanban board: vanilla JS, data stored in the browser (localStorage).
 const COLUMNS = [
-  { id: "todo",   title: "Por hacer",    color: "#94a3b8" },
-  { id: "doing",  title: "En progreso",  color: "#6366f1" },
-  { id: "review", title: "En revisión",  color: "#f59e0b" },
-  { id: "done",   title: "Hecho",        color: "#10b981" },
+  { id: "todo",  title: "To Do",       color: "#94a3b8" },
+  { id: "doing", title: "In Progress", color: "#6366f1" },
+  { id: "done",  title: "Done",        color: "#10b981" },
 ];
-const PRIORITY = { high: "Alta", medium: "Media", low: "Baja" };
-const KEY = "kanbanboard.v1";
+const PRIORITY = { high: "High", medium: "Medium", low: "Low" };
+const KEY = "kanbanboard.v2";
 
 const $ = (id) => document.getElementById(id);
 const uid = () => Math.random().toString(36).slice(2, 10);
@@ -15,11 +14,10 @@ const uid = () => Math.random().toString(36).slice(2, 10);
 function seed() {
   const day = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
   return [
-    { id: uid(), title: "Definir alcance del proyecto", desc: "Reunir requisitos con el equipo.", status: "done", priority: "high", due: day(-2), tags: ["planificación"] },
-    { id: uid(), title: "Diseñar la pantalla de inicio", desc: "Wireframes y paleta de color.", status: "doing", priority: "medium", due: day(2), tags: ["diseño"] },
-    { id: uid(), title: "Configurar el pipeline de despliegue", desc: "", status: "todo", priority: "high", due: day(-1), tags: ["devops"] },
-    { id: uid(), title: "Revisar textos de la web", desc: "Ortografía y tono.", status: "review", priority: "low", due: "", tags: ["contenido"] },
-    { id: uid(), title: "Arrastra esta tarjeta a otra columna", desc: "También puedes usar los botones ← →.", status: "todo", priority: "low", due: "", tags: ["tutorial"] },
+    { id: uid(), title: "Define project scope", desc: "Gather requirements with the team.", status: "done", priority: "high", due: day(-2), tags: ["planning"] },
+    { id: uid(), title: "Design the home screen", desc: "Wireframes and color palette.", status: "doing", priority: "medium", due: day(2), tags: ["design"] },
+    { id: uid(), title: "Set up the deployment pipeline", desc: "", status: "todo", priority: "high", due: day(-1), tags: ["devops"] },
+    { id: uid(), title: "Drag this card to another column", desc: "You can also use the ← → buttons.", status: "todo", priority: "low", due: "", tags: ["tutorial"] },
   ];
 }
 let tasks = load();
@@ -54,13 +52,13 @@ function render() {
   COLUMNS.forEach((col, ci) => {
     const items = list.filter((t) => t.status === col.id);
     const cards = el("div", { className: "cards" });
-    if (!items.length) cards.append(el("div", { className: "empty", textContent: "Sin tareas" }));
+    if (!items.length) cards.append(el("div", { className: "empty", textContent: "No tasks" }));
     items.forEach((t) => cards.append(renderCard(t, ci)));
 
     const dot = el("span", { className: "dot" });
     dot.style.background = col.color;
-    const add = el("button", { className: "add-quick", type: "button", title: "Añadir tarea", textContent: "+" });
-    add.setAttribute("aria-label", "Añadir tarea en " + col.title);
+    const add = el("button", { className: "add-quick", type: "button", title: "Add task", textContent: "+" });
+    add.setAttribute("aria-label", "Add task in " + col.title);
     add.onclick = () => openDialog(null, col.id);
 
     const column = el("section", { className: "column" },
@@ -88,18 +86,18 @@ function renderCard(t, colIndex) {
   t.tags.forEach((tag) => meta.append(el("span", { className: "tag", textContent: tag })));
   if (t.due) {
     const late = t.status !== "done" && t.due < new Date().toISOString().slice(0, 10);
-    const d = new Date(t.due + "T00:00:00").toLocaleDateString("es-ES", { day: "numeric", month: "short" });
-    meta.append(el("span", { className: "due" + (late ? " late" : ""), textContent: (late ? "Vencida · " : "") + d }));
+    const d = new Date(t.due + "T00:00:00").toLocaleDateString("en-US", { day: "numeric", month: "short" });
+    meta.append(el("span", { className: "due" + (late ? " late" : ""), textContent: (late ? "Overdue · " : "") + d }));
   }
   card.append(meta);
 
-  const left = el("button", { type: "button", textContent: "←", title: "Mover a la izquierda", disabled: colIndex === 0 });
-  const right = el("button", { type: "button", textContent: "→", title: "Mover a la derecha", disabled: colIndex === COLUMNS.length - 1 });
-  left.setAttribute("aria-label", "Mover a la izquierda");
-  right.setAttribute("aria-label", "Mover a la derecha");
+  const left = el("button", { type: "button", textContent: "←", title: "Move left", disabled: colIndex === 0 });
+  const right = el("button", { type: "button", textContent: "→", title: "Move right", disabled: colIndex === COLUMNS.length - 1 });
+  left.setAttribute("aria-label", "Move left");
+  right.setAttribute("aria-label", "Move right");
   left.onclick = () => move(t.id, COLUMNS[colIndex - 1].id);
   right.onclick = () => move(t.id, COLUMNS[colIndex + 1].id);
-  const edit = el("button", { type: "button", textContent: "Editar" });
+  const edit = el("button", { type: "button", textContent: "Edit" });
   edit.onclick = () => openDialog(t.id);
   card.append(el("div", { className: "card-actions" }, left, right, el("span", { className: "spacer" }), edit));
 
@@ -122,10 +120,10 @@ function renderStats() {
   const stat = (n, label) => el("div", { className: "stat" }, el("b", { textContent: String(n) }), el("span", { textContent: label }));
   const bar = el("i"); bar.style.width = pct + "%";
   $("stats").replaceChildren(
-    stat(total, "Tareas totales"),
-    stat(tasks.filter((t) => t.status === "doing").length, "En progreso"),
-    stat(late, "Vencidas"),
-    el("div", { className: "stat progress" }, el("span", { textContent: `Completado: ${pct}% (${done}/${total})` }), el("div", { className: "bar" }, bar)));
+    stat(total, "Total tasks"),
+    stat(tasks.filter((t) => t.status === "doing").length, "In progress"),
+    stat(late, "Overdue"),
+    el("div", { className: "stat progress" }, el("span", { textContent: `Completed: ${pct}% (${done}/${total})` }), el("div", { className: "bar" }, bar)));
 }
 
 // ---------- Actions ----------
@@ -154,7 +152,7 @@ $("f-status").replaceChildren(...COLUMNS.map((c) => el("option", { value: c.id, 
 function openDialog(id, status = "todo") {
   editingId = id;
   const t = id ? tasks.find((x) => x.id === id) : null;
-  $("dialog-title").textContent = t ? "Editar tarea" : "Nueva tarea";
+  $("dialog-title").textContent = t ? "Edit task" : "New task";
   $("f-title").value = t ? t.title : "";
   $("f-desc").value = t ? t.desc : "";
   $("f-status").value = t ? t.status : status;
@@ -179,14 +177,14 @@ $("form").addEventListener("submit", () => {
   if (editingId) Object.assign(tasks.find((x) => x.id === editingId), data);
   else tasks.push({ id: uid(), ...data });
   save(); render();
-  toast(editingId ? "Tarea actualizada" : "Tarea creada");
+  toast(editingId ? "Task updated" : "Task created");
 });
 
 $("btn-cancel").onclick = () => dialog.close();
 $("btn-delete").onclick = () => {
-  if (!confirm("¿Eliminar esta tarea?")) return;
+  if (!confirm("Delete this task?")) return;
   tasks = tasks.filter((x) => x.id !== editingId);
-  save(); render(); dialog.close(); toast("Tarea eliminada");
+  save(); render(); dialog.close(); toast("Task deleted");
 };
 dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.close(); });
 

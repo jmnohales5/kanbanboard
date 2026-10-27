@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Kanban Board</title>
-  <meta name="description" content="Tablero Kanban para gestionar tareas pendientes. Funciona en el navegador, sin servidor.">
+  <meta name="description" content="Kanban board to manage your pending tasks. Runs in the browser, no server needed.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236366f1'/%3E%3Crect x='6' y='7' width='5' height='18' rx='2' fill='white'/%3E%3Crect x='13.5' y='7' width='5' height='12' rx='2' fill='white' opacity='.85'/%3E%3Crect x='21' y='7' width='5' height='8' rx='2' fill='white' opacity='.7'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -17,57 +17,57 @@
     <div class="tools">
       <label class="search">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="search" type="search" placeholder="Buscar tareas…" aria-label="Buscar tareas">
+        <input id="search" type="search" placeholder="Search tasks…" aria-label="Search tasks">
       </label>
-      <select id="filter-priority" aria-label="Filtrar por prioridad">
-        <option value="">Todas las prioridades</option>
-        <option value="high">Alta</option>
-        <option value="medium">Media</option>
-        <option value="low">Baja</option>
+      <select id="filter-priority" aria-label="Filter by priority">
+        <option value="">All priorities</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
       </select>
-      <button id="theme" class="icon-btn" type="button" aria-label="Cambiar tema" title="Cambiar tema">
+      <button id="theme" class="icon-btn" type="button" aria-label="Toggle theme" title="Toggle theme">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
       </button>
-      <button id="new-task" class="btn primary" type="button">+ Nueva tarea</button>
+      <button id="new-task" class="btn primary" type="button">+ New task</button>
     </div>
   </header>
 
-  <section class="stats" id="stats" aria-label="Resumen"></section>
+  <section class="stats" id="stats" aria-label="Summary"></section>
 
-  <main class="board" id="board" aria-label="Tablero"></main>
+  <main class="board" id="board" aria-label="Board"></main>
 
   <dialog id="dialog">
     <form id="form" method="dialog">
-      <h2 id="dialog-title">Nueva tarea</h2>
-      <label>Título
+      <h2 id="dialog-title">New task</h2>
+      <label>Title
         <input id="f-title" required maxlength="120" autocomplete="off">
       </label>
-      <label>Descripción
+      <label>Description
         <textarea id="f-desc" rows="3" maxlength="500"></textarea>
       </label>
       <div class="row">
-        <label>Estado
+        <label>Status
           <select id="f-status"></select>
         </label>
-        <label>Prioridad
+        <label>Priority
           <select id="f-priority">
-            <option value="low">Baja</option>
-            <option value="medium" selected>Media</option>
-            <option value="high">Alta</option>
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
           </select>
         </label>
-        <label>Fecha límite
+        <label>Due date
           <input id="f-due" type="date">
         </label>
       </div>
-      <label>Etiquetas <small>(separadas por comas)</small>
-        <input id="f-tags" maxlength="80" placeholder="diseño, backend" autocomplete="off">
+      <label>Tags <small>(comma separated)</small>
+        <input id="f-tags" maxlength="80" placeholder="design, backend" autocomplete="off">
       </label>
       <div class="actions">
-        <button type="button" id="btn-delete" class="btn danger">Eliminar</button>
+        <button type="button" id="btn-delete" class="btn danger">Delete</button>
         <span class="spacer"></span>
-        <button type="button" id="btn-cancel" class="btn">Cancelar</button>
-        <button type="submit" class="btn primary">Guardar</button>
+        <button type="button" id="btn-cancel" class="btn">Cancel</button>
+        <button type="submit" class="btn primary">Save</button>
       </div>
     </form>
   </dialog>
